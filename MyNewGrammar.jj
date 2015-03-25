@@ -1,54 +1,58 @@
-PARSER_BEGIN(Exemplo)
+options
+{
+	LOOKAHEAD = 1;
+}
+
+PARSER_BEGIN(MyNewGrammar)
 // código Java que invoca o parser
-public class Exemplo {
+public class MyNewGrammar {
 	public static void main(String args[]) throws ParseException {
 		// criação do objecto utilizando o constructor com argumento para
 		// ler do standard input (teclado)
-		Exemplo parser = new Exemplo(System.in);
-		parser.Aritm();
+		MyNewGrammar parser = new MyNewGrammar(System.in);
+		parser.line();
 	}
 }
-PARSER_END(Exemplo)
+PARSER_END(MyNewGrammar)
 // símbolos que não devem ser considerados na análise
 SKIP :
 {
-" " | "/t" | "/r"
+" " | "\t" | "\r"
 }
 // definição dos tokens (símbolos terminais)
 TOKEN :
 {
 < INTEGER : (["0" - "9"])+ >
 | < LF : "\n" >
-|< SYMBOL : (["a" - "z"] | ["A" - "Z"] | ["0" - "9"]) >
 |< DIRECTION : "R" | "L" > 
+|< SYMBOL : (["a" - "z"] | ["A" - "Z"] | ["0" - "9"]) >
 |< DIVIDER : ":" >
 }
 // definição da produção
 void read() : {}
 {
-  < SYMBOL >
+  <SYMBOL><DIVIDER>
 }
 
 void write() :
 {
 }
-
 {
-  < SYMBOL > 
+  <SYMBOL><DIVIDER>
 }
 
 void state() :
 {
 }
 {
-  < INTEGER >
+  <INTEGER><DIVIDER>
 }
 
 void nextstate() :
 {
 }
 {
-  < INTEGER >
+  <INTEGER><DIVIDER>
 }
 
 
@@ -56,7 +60,7 @@ void direction() :
 {
 }
 {
-  < DIRECTION >
+  <DIRECTION>
 }
 
 void line() :
