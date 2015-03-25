@@ -21,6 +21,7 @@ TOKEN :
 | < LF : "\n" >
 |< SYMBOL : (["a" - "z"] | ["A" - "Z"] | ["0" - "9"]) >
 |< DIRECTION : "R" | "L" > 
+|< DIVIDER : ":" >
 }
 // definição da produção
 void read() : {}
