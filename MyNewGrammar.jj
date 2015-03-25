@@ -1,12 +1,12 @@
 PARSER_BEGIN(Exemplo)
 // código Java que invoca o parser
 public class Exemplo {
- public static void main(String args[]) throws ParseException {
-// criação do objecto utilizando o constructor com argumento para
-// ler do standard input (teclado)
- Exemplo parser = new Exemplo(System.in);
- parser.Aritm();
- }
+	public static void main(String args[]) throws ParseException {
+		// criação do objecto utilizando o constructor com argumento para
+		// ler do standard input (teclado)
+		Exemplo parser = new Exemplo(System.in);
+		parser.Aritm();
+	}
 }
 PARSER_END(Exemplo)
 // símbolos que não devem ser considerados na análise
@@ -19,7 +19,7 @@ TOKEN :
 {
 < INTEGER : (["0" - "9"])+ >
 | < LF : "\n" >
-|< SYMBOL : (["a" - "z"]  ["A" - "Z"]  ["0" - "9"]) >
+|< SYMBOL : (["a" - "z"] | ["A" - "Z"] | ["0" - "9"]) >
 |< DIRECTION : "R" | "L" > 
 }
 // definição da produção
