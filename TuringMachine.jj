@@ -23,9 +23,16 @@ TOKEN :
 {
 < INTEGER : (["0" - "9"])+ >
 | < LF : "\n" >
-|< DIRECTION : "R" | "L" > 
+|< DIRECTION : "right" | "left" > 
 |< SYMBOL : (["a" - "z"] | ["A" - "Z"] | ["0" - "9"]) >
 |< DIVIDER : ":" >
+|< STATE_KEYWORD : "State" >
+|< CARD_BEG_KEYWORD : "{" >
+|< CARD_END_KEYWORD : "}" >
+|< READ_KEYWORD : "read" >
+|< WRITE_KEYWORD : "write" >
+|< MOVE_KEYBOARD : "move" >
+|< JUMP_KEYWORD : "jump" >
 }
 // definição da produção
 void read() : {}
