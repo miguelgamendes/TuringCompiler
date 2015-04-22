@@ -16,17 +16,14 @@ PARSER_END(TuringMachine)
 // símbolos que não devem ser considerados na análise
 SKIP :
 {
-"\t" | "\r"
+" " | "\n" | "\t" | "\r"
 }
 // definição dos tokens (símbolos terminais)
 TOKEN :
 {
-< WHITESPACE : (" " | "\n")+ >
-|< INTEGER : (["0" - "9"])+ >
-|< EOL : "\n" >
+< INTEGER : (["0" - "9"])+ >
 |< DIRECTION : "right" | "left" > 
 |< SYMBOL : (["a" - "z"] | ["A" - "Z"] | ["0" - "9"]) >
-//|< DIVIDER : ":" >
 |< STATE_KEYWORD : "State" >
 |< CARD_BEG_KEYWORD : "{" >
 |< CARD_END_KEYWORD : "}" >
@@ -38,28 +35,32 @@ TOKEN :
 // definição da produção
 void read() : {}
 {
-  <READ_KEYWORD><WHITESPACE><SYMBOL><WHITESPACE>
+  <READ_KEYWORD><SYMBOL>
 }
 
 void write() :
 {
 }
 {
-  <WRITE_KEYWORD><WHITESPACE><SYMBOL><WHITESPACE>
+  <WRITE_KEYWORD><SYMBOL>
 }
 
 void state() :
-{
+{Token state;
 }
 {
-  <STATE_KEYWORD><WHITESPACE><INTEGER><WHITESPACE><CARD_BEG_KEYWORD><WHITESPACE>
+  <STATE_KEYWORD>
+  state=<INTEGER>{
+    System.out.println("State: " + state.image);
+  }
+  <CARD_BEG_KEYWORD>
 }
 
 void nextstate() :
 {
 }
 {
-  <JUMP_KEYWORD><INTEGER><WHITESPACE><CARD_END_KEYWORD>
+  <JUMP_KEYWORD><INTEGER>
 }
 
 
@@ -67,14 +68,21 @@ void direction() :
 {
 }
 {
-  <MOVE_KEYWORD><WHITESPACE><DIRECTION><WHITESPACE>
+  <MOVE_KEYWORD><DIRECTION>
+}
+
+void line() :
+{
+}
+{
+  read() write() direction() nextstate()
 }
 
 void card() :
 {
 }
 {
-  state() read() write() direction() nextstate() [<EOL>]
+  state() (line())* <CARD_END_KEYWORD>
 }
 
 void file() :
