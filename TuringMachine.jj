@@ -48,20 +48,18 @@ void write() :
 {
 }
 {
-  try {
-    (<WRITE_KEYWORD><SYMBOL>)
-  } catch (ParseException e) {
-    System.out.println("TEST");
-  }
+  <WRITE_KEYWORD><SYMBOL>
 }
 
 void state() :
-{Token state;
+{
 }
 {
   <STATE_KEYWORD>
-  state=<INTEGER>{
-    System.out.println("State: " + state.image);
+  try {
+    <INTEGER>
+  } catch(ParseException e) {
+    System.out.println("ERROR: STATE SHOULD BE INTEGER\nFROM");
   }
   <CARD_BEG_KEYWORD>
 }
@@ -95,12 +93,21 @@ void card() :
 {
 }
 {
-  state() (line())* <CARD_END_KEYWORD>
+  try {
+    state()
+  } catch (ParseException e) {
+    System.out.println("ERROR: STATE SYNTAX ERROR\nFROM");
+  }
+  (line())* <CARD_END_KEYWORD>
 }
 
 void file() :
 {
 }
 {
-  (card())*<EOF>
+  try {
+    (card())*<EOF>
+  } catch (ParseException e) {
+    System.out.println("ERROR: CARD SYNTAX ERROR");
+  }
 }
