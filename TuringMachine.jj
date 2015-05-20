@@ -9,16 +9,21 @@ import java.io.*;
 public class TuringMachine {
 	public static void main(String args[]) throws ParseException, FileNotFoundException {
 		TuringMachine parser = new TuringMachine(new FileInputStream(args[0]));
-    /*
-    try { */
-		  parser.file(); /*
-    } catch (ParseException e) {
-      //System.out.println(e);
-    }
-    */
+		parser.file();
 	}
 }
 PARSER_END(TuringMachine)
+
+JAVACODE
+void error_skipto(int kind, String type) {
+  ParseException e = generateParseException();
+  System.out.println("OMG you wrote a " + type + " wrong!!! D:");
+  Token t;
+  do {
+    t = getNextToken();
+  } while(t.kind != kind);
+}
+
 // símbolos que não devem ser considerados na análise
 SKIP :
 {
@@ -37,7 +42,9 @@ TOKEN :
 |< WRITE_KEYWORD : "write" >
 |< MOVE_KEYWORD : "move" >
 |< JUMP_KEYWORD : "jump" >
+|< SEMICOLON : ";" >
 }
+
 // definição da produção
 void read() : {}
 {
@@ -55,20 +62,20 @@ void state() :
 {
 }
 {
-  <STATE_KEYWORD>
   try {
+    (<STATE_KEYWORD>
     <INTEGER>
+    <CARD_BEG_KEYWORD>)
   } catch(ParseException e) {
-    System.out.println("ERROR: STATE SHOULD BE INTEGER\nFROM");
+    error_skipto(CARD_BEG_KEYWORD, "card header");
   }
-  <CARD_BEG_KEYWORD>
 }
 
 void nextstate() :
 {
 }
 {
-  <JUMP_KEYWORD><INTEGER>
+  <JUMP_KEYWORD><INTEGER><SEMICOLON>
 }
 
 
@@ -83,10 +90,25 @@ void line() :
 {
 }
 {
-  read()
-  write()
-  direction()
-  nextstate()
+  try {
+    (read()
+    write()
+    direction()
+    nextstate())
+  } catch (ParseException e) {
+    error_skipto(SEMICOLON, "line");
+  }
+}
+
+void endstate() :
+{
+}
+{
+  try {
+    <CARD_END_KEYWORD>
+  } catch(ParseException e) {
+    error_skipto(CARD_END_KEYWORD, "card ending");
+  }
 }
 
 void card() :
@@ -95,29 +117,16 @@ void card() :
 {
   try {
     state()
-  } catch (ParseException e) {
-    System.out.println("ERROR: STATE SYNTAX ERROR\nFROM");
+    (line())*
+    endstate()
+  } catch(ParseException e) {
+    error_skipto(EOF, "card");
   }
-  (line())* <CARD_END_KEYWORD>
 }
 
 void file() :
 {
 }
 {
-  try {
-    (card())*<EOF>
-  } catch (ParseException e) {
-    System.out.println("ERROR: CARD SYNTAX ERROR");
-  }
-}
-
-JAVACODE
-void error_skipto(int kind) {
-  ParseException e = generateParseException();
-  System.out.println(e.toString());
-  Token t;
-  do {
-    t = getNextToken;
-  } while(t.kind != kind)
+  (card())*<EOF>
 }

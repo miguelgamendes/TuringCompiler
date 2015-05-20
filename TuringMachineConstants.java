@@ -28,6 +28,8 @@ public interface TuringMachineConstants {
   int MOVE_KEYWORD = 13;
   /** RegularExpression Id. */
   int JUMP_KEYWORD = 14;
+  /** RegularExpression Id. */
+  int SEMICOLON = 15;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -49,6 +51,7 @@ public interface TuringMachineConstants {
     "\"write\"",
     "\"move\"",
     "\"jump\"",
+    "\";\"",
   };
 
 }

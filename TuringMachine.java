@@ -5,14 +5,16 @@ import java.io.*;
 public class TuringMachine implements TuringMachineConstants {
         public static void main(String args[]) throws ParseException, FileNotFoundException {
                 TuringMachine parser = new TuringMachine(new FileInputStream(args[0]));
-    /*
-    try { */
-                  parser.file(); /*
-    } catch (ParseException e) {
-      //System.out.println(e);
-    }
-    */
+                parser.file();
         }
+
+  static void error_skipto(int kind, String type) throws ParseException {ParseException e = generateParseException();
+  System.out.println("OMG you wrote a " + type + " wrong!!! D:");
+  Token t;
+  do {
+    t = getNextToken();
+  } while(t.kind != kind);
+  }
 
 // definição da produção
   static final public void read() throws ParseException {
@@ -26,18 +28,19 @@ public class TuringMachine implements TuringMachineConstants {
   }
 
   static final public void state() throws ParseException {
-    jj_consume_token(STATE_KEYWORD);
     try {
+      jj_consume_token(STATE_KEYWORD);
       jj_consume_token(INTEGER);
+      jj_consume_token(CARD_BEG_KEYWORD);
     } catch (ParseException e) {
-System.out.println("ERROR: STATE SHOULD BE INTEGER\u005cnFROM");
+error_skipto(CARD_BEG_KEYWORD, "card header");
     }
-    jj_consume_token(CARD_BEG_KEYWORD);
   }
 
   static final public void nextstate() throws ParseException {
     jj_consume_token(JUMP_KEYWORD);
     jj_consume_token(INTEGER);
+    jj_consume_token(SEMICOLON);
   }
 
   static final public void direction() throws ParseException {
@@ -46,53 +49,61 @@ System.out.println("ERROR: STATE SHOULD BE INTEGER\u005cnFROM");
   }
 
   static final public void line() throws ParseException {
-    read();
-    write();
-    direction();
-    nextstate();
+    try {
+      read();
+      write();
+      direction();
+      nextstate();
+    } catch (ParseException e) {
+error_skipto(SEMICOLON, "line");
+    }
   }
 
-  static final public void card() throws ParseException {bool var;
+  static final public void endstate() throws ParseException {
+    try {
+      jj_consume_token(CARD_END_KEYWORD);
+    } catch (ParseException e) {
+error_skipto(CARD_END_KEYWORD, "card ending");
+    }
+  }
+
+  static final public void card() throws ParseException {
     try {
       state();
-    } catch (ParseException e) {
-System.out.println("ERROR: STATE SYNTAX ERROR\u005cnFROM");
-    }
-    label_1:
-    while (true) {
-      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-      case READ_KEYWORD:{
-        ;
-        break;
-        }
-      default:
-        jj_la1[0] = jj_gen;
-        break label_1;
-      }
-      line();
-    }
-    jj_consume_token(CARD_END_KEYWORD);
-  }
-
-  static final public void file() throws ParseException {
-    try {
-      label_2:
+      label_1:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-        case STATE_KEYWORD:{
+        case READ_KEYWORD:{
           ;
           break;
           }
         default:
-          jj_la1[1] = jj_gen;
-          break label_2;
+          jj_la1[0] = jj_gen;
+          break label_1;
         }
-        card();
+        line();
       }
-      jj_consume_token(0);
+      endstate();
     } catch (ParseException e) {
-System.out.println("ERROR: CARD SYNTAX ERROR");
+error_skipto(EOF, "card");
     }
+  }
+
+  static final public void file() throws ParseException {
+    label_2:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case STATE_KEYWORD:{
+        ;
+        break;
+        }
+      default:
+        jj_la1[1] = jj_gen;
+        break label_2;
+      }
+      card();
+    }
+    jj_consume_token(0);
   }
 
   static private boolean jj_initialized_once = false;
@@ -249,7 +260,7 @@ System.out.println("ERROR: CARD SYNTAX ERROR");
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[15];
+    boolean[] la1tokens = new boolean[16];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -263,7 +274,7 @@ System.out.println("ERROR: CARD SYNTAX ERROR");
         }
       }
     }
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 16; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
