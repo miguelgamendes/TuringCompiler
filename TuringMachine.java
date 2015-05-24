@@ -8,7 +8,7 @@ public class TuringMachine implements TuringMachineConstants {
                 parser.file();
         }
 
-  static void error_skipto(int kind, String type) throws ParseException {//ParseException e = generateParseException();
+  static void error_skipto(int kind, String type) throws ParseException {ParseException e = generateParseException();
   System.out.println("OMG you wrote a " + type + " wrong!!! D:");
   Token t;
   do {
@@ -18,132 +18,88 @@ public class TuringMachine implements TuringMachineConstants {
 
 // definição da produção
   static final public void read() throws ParseException {
-    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case READ_KEYWORD:{
-      jj_consume_token(READ_KEYWORD);
-      jj_consume_token(SYMBOL);
-      break;
-      }
-    default:
-      jj_la1[0] = jj_gen;
-      error_skipto(COMMA, "read statement");
-    }
+System.out.println("READ");
+    jj_consume_token(READ_KEYWORD);
+    jj_consume_token(SYMBOL);
   }
 
   static final public void write() throws ParseException {
-    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case WRITE_KEYWORD:{
-      jj_consume_token(WRITE_KEYWORD);
-      jj_consume_token(SYMBOL);
-      break;
-      }
-    default:
-      jj_la1[1] = jj_gen;
-      error_skipto(COMMA, "write statement");
-    }
+System.out.println("WRITE");
+    jj_consume_token(WRITE_KEYWORD);
+    jj_consume_token(SYMBOL);
   }
 
   static final public void state() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case STATE_KEYWORD:{
+System.out.println("STATE");
       jj_consume_token(STATE_KEYWORD);
       jj_consume_token(INTEGER);
       jj_consume_token(CARD_BEG_KEYWORD);
       break;
       }
     default:
-      jj_la1[2] = jj_gen;
+      jj_la1[0] = jj_gen;
       error_skipto(CARD_BEG_KEYWORD, "card header");
     }
   }
 
   static final public void nextstate() throws ParseException {
-    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case JUMP_KEYWORD:{
-      jj_consume_token(JUMP_KEYWORD);
-      jj_consume_token(INTEGER);
-      break;
-      }
-    default:
-      jj_la1[3] = jj_gen;
-      error_skipto(SEMICOLON, "jump statement");
-    }
+System.out.println("JUMP");
+    jj_consume_token(JUMP_KEYWORD);
+    jj_consume_token(INTEGER);
   }
 
   static final public void direction() throws ParseException {
-    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case MOVE_KEYWORD:{
-      jj_consume_token(MOVE_KEYWORD);
-      jj_consume_token(DIRECTION);
-      break;
-      }
-    default:
-      jj_la1[4] = jj_gen;
-      error_skipto(COMMA, "move statement");
-    }
+System.out.println("MOVE");
+    jj_consume_token(MOVE_KEYWORD);
+    jj_consume_token(DIRECTION);
   }
 
   static final public void line() throws ParseException {
 System.out.println("LINE");
-    try {
-      label_1:
-      while (true) {
+    label_1:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case READ_KEYWORD:{
         ;
-        read();
-        jj_consume_token(COMMA);
-        write();
-        jj_consume_token(COMMA);
-        direction();
-        jj_consume_token(COMMA);
-        nextstate();
-        jj_consume_token(SEMICOLON);
+        break;
+        }
+      default:
+        jj_la1[1] = jj_gen;
+        break label_1;
       }
-    } catch (ParseException e) {
-{System.out.println("LINE ERROR");}
-    //error_skipto(SEMICOLON, "line");
-
+      read();
+      jj_consume_token(COMMA);
+      write();
+      jj_consume_token(COMMA);
+      direction();
+      jj_consume_token(COMMA);
+      nextstate();
+      jj_consume_token(SEMICOLON);
     }
   }
 
   static final public void endstate() throws ParseException {
-    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case CARD_END_KEYWORD:{
-      jj_consume_token(CARD_END_KEYWORD);
-      break;
-      }
-    default:
-      jj_la1[5] = jj_gen;
-      error_skipto(CARD_END_KEYWORD, "card ending");
-    }
+System.out.println("CARDEND");
+    jj_consume_token(CARD_END_KEYWORD);
   }
 
-  static final public int card() throws ParseException {int correctCard = 1;
+  static final public void card() throws ParseException {int correctCard = 1;
   int wrongCard = 0;
   int correctCardCount = 0;
   int wrongCardCount = 0;
-    try {
-      state();
-      line();
-      endstate();
-      correctCardCount = card();
-    } catch (ParseException e) {
-error_skipto(CARD_END_KEYWORD, "card");
-    {if ("" != null) return ++wrongCardCount;}
-    }
-{if ("" != null) return wrongCardCount;}
-    throw new Error("Missing return statement in function");
+System.out.println("CARD");
+    state();
+    line();
+    endstate();
+    card();
   }
 
   static final public void file() throws ParseException {int correctCompile = 0;
   int wrongCompile = 0;
-System.out.println("\u005cnErrors:");
-    correctCompile = card();
-if(wrongCompile == 0)System.out.println("NONE");
-System.out.println();
-if(wrongCompile != 0)
-      System.out.println("Compilation complete.\u005cn\u005cnWrong cards: " + wrongCompile);
-    else
-      System.out.println("Compilation complete.\u005cn\u005cnAll cards correct.");
+    card();
+    jj_consume_token(0);
   }
 
   static private boolean jj_initialized_once = false;
@@ -156,13 +112,13 @@ if(wrongCompile != 0)
   static public Token jj_nt;
   static private int jj_ntk;
   static private int jj_gen;
-  static final private int[] jj_la1 = new int[6];
+  static final private int[] jj_la1 = new int[2];
   static private int[] jj_la1_0;
   static {
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x800,0x1000,0x100,0x4000,0x2000,0x400,};
+      jj_la1_0 = new int[] {0x100,0x800,};
    }
 
   /** Constructor with InputStream. */
@@ -183,7 +139,7 @@ if(wrongCompile != 0)
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 6; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -197,7 +153,7 @@ if(wrongCompile != 0)
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 6; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -214,7 +170,7 @@ if(wrongCompile != 0)
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 6; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -224,7 +180,7 @@ if(wrongCompile != 0)
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 6; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -240,7 +196,7 @@ if(wrongCompile != 0)
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 6; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -249,7 +205,7 @@ if(wrongCompile != 0)
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 6; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
   }
 
   static private Token jj_consume_token(int kind) throws ParseException {
@@ -305,7 +261,7 @@ if(wrongCompile != 0)
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 2; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {

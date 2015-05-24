@@ -16,7 +16,7 @@ PARSER_END(TuringMachine)
 
 JAVACODE
 void error_skipto(int kind, String type) {
-  //ParseException e = generateParseException();
+  ParseException e = generateParseException();
   System.out.println("OMG you wrote a " + type + " wrong!!! D:");
   Token t;
   do {
@@ -49,26 +49,29 @@ TOKEN :
 // definição da produção
 void read() : {}
 {
+  {System.out.println("READ");}
   (<READ_KEYWORD>
   <SYMBOL>)
-  |
-  error_skipto(COMMA, "read statement")
+  //|
+  //error_skipto(COMMA, "read statement")
 }
 
 void write() :
 {
 }
 {
+  {System.out.println("WRITE");}
   (<WRITE_KEYWORD>
   <SYMBOL>)
-  |
-  error_skipto(COMMA, "write statement")
+  //|
+  //error_skipto(COMMA, "write statement")
 }
 
 void state() :
 {
 }
 {
+  {System.out.println("STATE");}
   (<STATE_KEYWORD>
   <INTEGER>
   <CARD_BEG_KEYWORD>)
@@ -80,10 +83,11 @@ void nextstate() :
 {
 }
 {
+  {System.out.println("JUMP");}
   (<JUMP_KEYWORD>
   <INTEGER>)
-  |
-  error_skipto(SEMICOLON, "jump statement")
+  //|
+  //error_skipto(SEMICOLON, "jump statement")
 }
 
 
@@ -91,10 +95,11 @@ void direction() :
 {
 }
 {
+  {System.out.println("MOVE");}
   (<MOVE_KEYWORD>
   <DIRECTION>)
-  |
-  error_skipto(COMMA, "move statement")
+  //|
+  //error_skipto(COMMA, "move statement")
 }
 
 void line() :
@@ -102,27 +107,28 @@ void line() :
 }
 {
   {System.out.println("LINE");}
-  try {
+  //try {
     (read() <COMMA>
     write() <COMMA>
     direction() <COMMA>
     nextstate() <SEMICOLON>)*
-  } catch (ParseException e) {
+  /*} catch (ParseException e) {
     {System.out.println("LINE ERROR");}
     //error_skipto(SEMICOLON, "line");
-  }
+  }*/
 }
 
 void endstate() :
 {
 }
 {
+  {System.out.println("CARDEND");}
   <CARD_END_KEYWORD>
-  |
-  error_skipto(CARD_END_KEYWORD, "card ending")
+  //|
+  //error_skipto(CARD_END_KEYWORD, "card ending")
 }
 
-int card() :
+void card() :
 {
   int correctCard = 1;
   int wrongCard = 0;
@@ -130,16 +136,18 @@ int card() :
   int wrongCardCount = 0;
 }
 {
-  try {
+  {System.out.println("CARD");}
+  //try {
     state()
     line()
     endstate()
-    [correctCardCount=card()]
-  } catch(ParseException e) {
+    //endstate()
+    [/*correctCardCount=*/card()]
+  /*} catch(ParseException e) {
     error_skipto(CARD_END_KEYWORD, "card");
     return ++wrongCardCount;
   }
-  { return wrongCardCount; }
+  { return wrongCardCount; }*/
 }
 
 void file() :
@@ -148,18 +156,17 @@ void file() :
   int wrongCompile = 0;
 }
 {
-  {System.out.println("\nErrors:");}
+  /*{System.out.println("\nErrors:");}
 
-  correctCompile = card()
+  correctCompile =*/ card()
 
-  {if(wrongCompile == 0)System.out.println("NONE");}
+  /*{if(wrongCompile == 0)System.out.println("NONE");}
   {System.out.println();}
   {
     if(wrongCompile != 0)
       System.out.println("Compilation complete.\n\nWrong cards: " + wrongCompile);
     else
       System.out.println("Compilation complete.\n\nAll cards correct.");
-  }
-  |
+  }*/
   <EOF>
 }
