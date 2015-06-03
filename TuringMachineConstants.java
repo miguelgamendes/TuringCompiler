@@ -9,29 +9,29 @@ public interface TuringMachineConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int INTEGER = 5;
+  int INTEGER = 9;
   /** RegularExpression Id. */
-  int DIRECTION = 6;
+  int DIRECTION = 10;
   /** RegularExpression Id. */
-  int SYMBOL = 7;
+  int SYMBOL = 11;
   /** RegularExpression Id. */
-  int STATE_KEYWORD = 8;
+  int STATE_KEYWORD = 12;
   /** RegularExpression Id. */
-  int CARD_BEG_KEYWORD = 9;
+  int CARD_BEG_KEYWORD = 13;
   /** RegularExpression Id. */
-  int CARD_END_KEYWORD = 10;
+  int CARD_END_KEYWORD = 14;
   /** RegularExpression Id. */
-  int READ_KEYWORD = 11;
+  int READ_KEYWORD = 15;
   /** RegularExpression Id. */
-  int WRITE_KEYWORD = 12;
+  int WRITE_KEYWORD = 16;
   /** RegularExpression Id. */
-  int MOVE_KEYWORD = 13;
+  int MOVE_KEYWORD = 17;
   /** RegularExpression Id. */
-  int JUMP_KEYWORD = 14;
+  int JUMP_KEYWORD = 18;
   /** RegularExpression Id. */
-  int SEMICOLON = 15;
+  int SEMICOLON = 19;
   /** RegularExpression Id. */
-  int COMMA = 16;
+  int COMMA = 20;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -43,6 +43,10 @@ public interface TuringMachineConstants {
     "\"\\n\"",
     "\"\\t\"",
     "\"\\r\"",
+    "\"(\"",
+    "\")\"",
+    "\"[\"",
+    "\"]\"",
     "<INTEGER>",
     "<DIRECTION>",
     "<SYMBOL>",

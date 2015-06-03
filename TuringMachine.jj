@@ -24,11 +24,28 @@ void error_skipto(int kind, String type) {
   } while(t.kind != kind);
 }
 
+JAVACODE
+void tokenerror_skipto(int kind) {
+  System.out.println("---ILLEGAL TOKEN---");
+  Token t;
+  do {
+    t = getNextToken();
+  } while(t.kind != kind);
+}
+
 // símbolos que não devem ser considerados na análise
 SKIP :
 {
-" " | "\n" | "\t" | "\r"
+" " 
+| "\n" 
+| "\t" 
+| "\r"
+| "("
+| ")"
+| "["
+| "]"
 }
+
 // definição dos tokens (símbolos terminais)
 TOKEN :
 {
@@ -72,11 +89,15 @@ void state() :
 }
 {
   {System.out.println("STATE");}
-  (<STATE_KEYWORD>
-  <INTEGER>
-  <CARD_BEG_KEYWORD>)
-  |
-  error_skipto(CARD_BEG_KEYWORD, "card header")
+  try {
+    (<STATE_KEYWORD>
+    <INTEGER>
+    <CARD_BEG_KEYWORD>)
+  } catch(TokenMgrError e) {
+    tokenerror_skipto(CARD_BEG_KEYWORD);
+  } catch(ParseException e) {
+    error_skipto(CARD_BEG_KEYWORD, "card header");
+  }
 }
 
 void nextstate() :
@@ -168,5 +189,7 @@ void file() :
     else
       System.out.println("Compilation complete.\n\nAll cards correct.");
   }*/
+
+  {System.out.println("EOF");}
   <EOF>
 }

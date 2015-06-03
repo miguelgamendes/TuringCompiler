@@ -16,6 +16,13 @@ public class TuringMachine implements TuringMachineConstants {
   } while(t.kind != kind);
   }
 
+  static void tokenerror_skipto(int kind) throws ParseException {System.out.println("---ILLEGAL TOKEN---");
+  Token t;
+  do {
+    t = getNextToken();
+  } while(t.kind != kind);
+  }
+
 // definição da produção
   static final public void read() throws ParseException {
 System.out.println("READ");
@@ -30,17 +37,15 @@ System.out.println("WRITE");
   }
 
   static final public void state() throws ParseException {
-    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case STATE_KEYWORD:{
 System.out.println("STATE");
+    try {
       jj_consume_token(STATE_KEYWORD);
       jj_consume_token(INTEGER);
       jj_consume_token(CARD_BEG_KEYWORD);
-      break;
-      }
-    default:
-      jj_la1[0] = jj_gen;
-      error_skipto(CARD_BEG_KEYWORD, "card header");
+    } catch (TokenMgrError e) {
+tokenerror_skipto(CARD_BEG_KEYWORD);
+    } catch (ParseException e) {
+error_skipto(CARD_BEG_KEYWORD, "card header");
     }
   }
 
@@ -66,7 +71,7 @@ System.out.println("LINE");
         break;
         }
       default:
-        jj_la1[1] = jj_gen;
+        jj_la1[0] = jj_gen;
         break label_1;
       }
       read();
@@ -93,12 +98,21 @@ System.out.println("CARD");
     state();
     line();
     endstate();
-    card();
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case STATE_KEYWORD:{
+      card();
+      break;
+      }
+    default:
+      jj_la1[1] = jj_gen;
+      ;
+    }
   }
 
   static final public void file() throws ParseException {int correctCompile = 0;
   int wrongCompile = 0;
     card();
+System.out.println("EOF");
     jj_consume_token(0);
   }
 
@@ -118,7 +132,7 @@ System.out.println("CARD");
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x100,0x800,};
+      jj_la1_0 = new int[] {0x8000,0x1000,};
    }
 
   /** Constructor with InputStream. */
@@ -256,7 +270,7 @@ System.out.println("CARD");
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[17];
+    boolean[] la1tokens = new boolean[21];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -270,7 +284,7 @@ System.out.println("CARD");
         }
       }
     }
-    for (int i = 0; i < 17; i++) {
+    for (int i = 0; i < 21; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
