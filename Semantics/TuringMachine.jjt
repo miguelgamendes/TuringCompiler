@@ -1,17 +1,16 @@
 options
 {
-	LOOKAHEAD = 1;
+  LOOKAHEAD = 1;
 }
 
 PARSER_BEGIN(TuringMachine)
 import java.io.*;
 // código Java que invoca o parser
 public class TuringMachine {
-	public static void main(String args[]) throws ParseException, FileNotFoundException {
-		TuringMachine parser = new TuringMachine(new FileInputStream(args[0]));
-		//parser.file();
+  public static void main(String args[]) throws ParseException, FileNotFoundException {
+    TuringMachine parser = new TuringMachine(new FileInputStream(args[0]));
     try {
-      SimpleNode n = parser.Start();
+      SimpleNode n = parser.file();
       n.dump("");
       System.out.println("Dumped.");
     } catch(Exception e) {
@@ -19,7 +18,7 @@ public class TuringMachine {
       System.out.println(e.getMessage());
       e.printStackTrace();
     }
-	}
+  }
 }
 PARSER_END(TuringMachine)
 
@@ -53,6 +52,7 @@ SKIP :
 | ")"
 | "["
 | "]"
+| < INVALIDINPUT : ~["0"-"9" , "a"-"z" , "A" - "Z" , "," , ";" , "{" , "}"] >
 }
 
 // definição dos tokens (símbolos terminais)
@@ -70,37 +70,49 @@ TOKEN :
 |< JUMP_KEYWORD : "jump" >
 |< SEMICOLON : ";" >
 |< COMMA : "," >
+|< NOTANUMBER : ~["0"-"9"]>
 }
 
 // definição da produção
-void read() : {}
+void read() #READ : 
+{
+  Token t;
+}
 {
   {System.out.println("READ");}
-  (<READ_KEYWORD>
-  <SYMBOL>)
-  //|
-  //error_skipto(COMMA, "read statement")
+  try {
+    (<READ_KEYWORD>
+    t = <SYMBOL> {jjtThis.value = t.image;}
+    <COMMA>)
+  } catch(ParseException e) {
+    error_skipto(COMMA, "read statement");
+  }
 }
 
-void write() :
+void write() #WRITE :
 {
+  Token t;
 }
 {
   {System.out.println("WRITE");}
-  (<WRITE_KEYWORD>
-  <SYMBOL>)
-  //|
-  //error_skipto(COMMA, "write statement")
+  try {
+    (<WRITE_KEYWORD>
+    t = <SYMBOL> {jjtThis.value = t.image;}
+    <COMMA>)
+  } catch(ParseException e) {
+    error_skipto(COMMA, "write statement");
+  }
 }
 
-void state() :
+void state() #STATE :
 {
+  Token t;
 }
 {
   {System.out.println("STATE");}
   try {
     (<STATE_KEYWORD>
-    <INTEGER>
+    t = <INTEGER> {jjtThis.value = t.image;}
     <CARD_BEG_KEYWORD>)
   } catch(TokenMgrError e) {
     tokenerror_skipto(CARD_BEG_KEYWORD);
@@ -109,46 +121,54 @@ void state() :
   }
 }
 
-void nextstate() :
+void nextstate() #JUMP :
 {
+  Token t;
 }
 {
   {System.out.println("JUMP");}
-  (<JUMP_KEYWORD>
-  <INTEGER>)
-  //|
-  //error_skipto(SEMICOLON, "jump statement")
+  try {
+    (<JUMP_KEYWORD>
+    t = <INTEGER> {jjtThis.value = t.image;}
+    <SEMICOLON>)
+  } catch(ParseException e) {
+    error_skipto(SEMICOLON, "jump statement");
+  }
 }
 
 
-void direction() :
+void direction() #MOVE :
 {
+  Token t;
 }
 {
   {System.out.println("MOVE");}
-  (<MOVE_KEYWORD>
-  <DIRECTION>)
-  //|
-  //error_skipto(COMMA, "move statement")
+  try {
+    (<MOVE_KEYWORD>
+    t = <DIRECTION> {jjtThis.value = t.image;}
+    <COMMA>)
+  } catch(ParseException e) {
+    error_skipto(COMMA, "move statement");
+  }
 }
 
-void line() :
+void line() #LINE :
 {
 }
 {
   {System.out.println("LINE");}
   //try {
-    (read() <COMMA>
-    write() <COMMA>
-    direction() <COMMA>
-    nextstate() <SEMICOLON>)*
+    (read()
+    write()
+    direction()
+    nextstate())
   /*} catch (ParseException e) {
     {System.out.println("LINE ERROR");}
-    //error_skipto(SEMICOLON, "line");
+    error_skipto(SEMICOLON, "line");
   }*/
 }
 
-void endstate() :
+void endstate() #void :
 {
 }
 {
@@ -158,7 +178,7 @@ void endstate() :
   //error_skipto(CARD_END_KEYWORD, "card ending")
 }
 
-void card() :
+void card() #CARD :
 {
   int correctCard = 1;
   int wrongCard = 0;
@@ -169,7 +189,7 @@ void card() :
   {System.out.println("CARD");}
   //try {
     state()
-    line()
+    (line())*
     endstate()
     //endstate()
     [/*correctCardCount=*/card()]
@@ -180,7 +200,7 @@ void card() :
   { return wrongCardCount; }*/
 }
 
-void file() :
+SimpleNode file() #TURINGMACHINE :
 {
   int correctCompile = 0;
   int wrongCompile = 0;
@@ -201,12 +221,6 @@ void file() :
 
   {System.out.println("EOF");}
   <EOF>
-}
 
-SimpleNode Start() :
-{
-}
-{
-  file()
-  { return jjtThis; }
+  {return jjtThis;}
 }
