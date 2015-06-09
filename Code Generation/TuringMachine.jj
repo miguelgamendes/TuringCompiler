@@ -87,6 +87,7 @@ public class TuringMachine/*@bgen(jjtree)*/implements TuringMachineTreeConstants
     //generate code
     CodeGenerator generator = new CodeGenerator(n);
     generator.generateCode();
+    System.out.println("CODE SUCCESSFULLY GENERATED");
 
   }
 }
@@ -179,7 +180,6 @@ void read(int currentState)       :
 {/*@bgen(jjtree) READ */
   try {
 /*@egen*/
-  {System.out.println("READ");}
   try {
     (<READ_KEYWORD>
     t = <SYMBOL> {jjtn000.value = t.image;}
@@ -207,7 +207,6 @@ void write(int currentState)        :
 {/*@bgen(jjtree) WRITE */
   try {
 /*@egen*/
-  {System.out.println("WRITE");}
   try {
     (<WRITE_KEYWORD>
     t = <SYMBOL> {jjtn000.value = t.image;}
@@ -235,7 +234,6 @@ int state()        :
 {/*@bgen(jjtree) STATE */
   try {
 /*@egen*/
-  {System.out.println("STATE");}
   try {
     (<STATE_KEYWORD>
     t = <INTEGER> {jjtn000.value = t.image;}
@@ -268,7 +266,6 @@ void nextstate(int currentState)       :
 {/*@bgen(jjtree) JUMP */
   try {
 /*@egen*/
-  {System.out.println("JUMP");}
   try {
     (<JUMP_KEYWORD>
     t = <INTEGER> {jjtn000.value = t.image;}
@@ -295,7 +292,6 @@ void end()      :
 {/*@bgen(jjtree) END */
   try {
 /*@egen*/
-  {System.out.println("END");}
   try {
     (<END_KEYWORD>
     <SEMICOLON>)
@@ -321,7 +317,6 @@ void direction()       :
 {/*@bgen(jjtree) MOVE */
   try {
 /*@egen*/
-  {System.out.println("MOVE");}
   try {
     (<MOVE_KEYWORD>
     t = <DIRECTION> {jjtn000.value = t.image;}
@@ -345,49 +340,39 @@ void line(int currentState)       :
 /*@egen*/
 }
 {/*@bgen(jjtree) LINE */
-  try {
+    try {
 /*@egen*/
-  {System.out.println("LINE");
-    /*System.out.println("LINE LINE LINE: " + currentState);*/}
-  //try {
     read(currentState)
     write(currentState)
     direction()
     (nextstate(currentState) | end())/*@bgen(jjtree)*/
-  } catch (Throwable jjte000) {
-    if (jjtc000) {
-      jjtree.clearNodeScope(jjtn000);
-      jjtc000 = false;
-    } else {
-      jjtree.popNode();
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
     }
-    if (jjte000 instanceof RuntimeException) {
-      throw (RuntimeException)jjte000;
-    }
-    if (jjte000 instanceof ParseException) {
-      throw (ParseException)jjte000;
-    }
-    throw (Error)jjte000;
-  } finally {
-    if (jjtc000) {
-      jjtree.closeNodeScope(jjtn000, true);
-    }
-  }
 /*@egen*/
-  /*} catch (ParseException e) {
-    {System.out.println("LINE ERROR");}
-    error_skipto(SEMICOLON, "line");
-  }*/
 }
 
 void endstate()       :
 {
 }
 {
-  {System.out.println("CARDEND");}
   <CARD_END_KEYWORD>
-  //|
-  //error_skipto(CARD_END_KEYWORD, "card ending")
 }
 
 void card()       :
@@ -403,15 +388,56 @@ void card()       :
   int currentState = -1;
 }
 {/*@bgen(jjtree) CARD */
-  try {
+    try {
 /*@egen*/
-  {System.out.println("CARD");}
-  //try {
     currentState = state()
     (line(currentState))*
     endstate()
-    //endstate()
-    [/*correctCardCount=*/card()]/*@bgen(jjtree)*/
+    [card()]/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+}
+
+SimpleNode file()                :
+{/*@bgen(jjtree) TURINGMACHINE */
+  SimpleNode jjtn000 = new SimpleNode(JJTTURINGMACHINE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/
+  int correctCompile = 0;
+  int wrongCompile = 0;
+}
+{/*@bgen(jjtree) TURINGMACHINE */
+  try {
+/*@egen*/
+  card()
+
+  <EOF>/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/
+
+  {return jjtn000;}/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -431,66 +457,5 @@ void card()       :
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/
-  /*} catch(ParseException e) {
-    error_skipto(CARD_END_KEYWORD, "card");
-    return ++wrongCardCount;
-  }
-  { return wrongCardCount; }*/
-}
-
-SimpleNode file()                :
-{/*@bgen(jjtree) TURINGMACHINE */
-  SimpleNode jjtn000 = new SimpleNode(JJTTURINGMACHINE);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/
-  int correctCompile = 0;
-  int wrongCompile = 0;
-}
-{/*@bgen(jjtree) TURINGMACHINE */
-                     try {
-/*@egen*/
-  /*{System.out.println("\nErrors:");}
-
-  correctCompile =*/ card()
-
-  /*{if(wrongCompile == 0)System.out.println("NONE");}
-  {System.out.println();}
-  {
-    if(wrongCompile != 0)
-      System.out.println("Compilation complete.\n\nWrong cards: " + wrongCompile);
-    else
-      System.out.println("Compilation complete.\n\nAll cards correct.");
-  }*/
-
-  {System.out.println("EOF");}
-  <EOF>/*@bgen(jjtree)*/
-  {
-    jjtree.closeNodeScope(jjtn000, true);
-    jjtc000 = false;
-  }
-/*@egen*/
-
-  {return jjtn000;}/*@bgen(jjtree)*/
-                     } catch (Throwable jjte000) {
-                       if (jjtc000) {
-                         jjtree.clearNodeScope(jjtn000);
-                         jjtc000 = false;
-                       } else {
-                         jjtree.popNode();
-                       }
-                       if (jjte000 instanceof RuntimeException) {
-                         throw (RuntimeException)jjte000;
-                       }
-                       if (jjte000 instanceof ParseException) {
-                         throw (ParseException)jjte000;
-                       }
-                       throw (Error)jjte000;
-                     } finally {
-                       if (jjtc000) {
-                         jjtree.closeNodeScope(jjtn000, true);
-                       }
-                     }
 /*@egen*/
 }

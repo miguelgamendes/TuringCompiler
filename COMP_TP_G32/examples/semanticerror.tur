@@ -1,7 +1,7 @@
 State 0 {
-    read a, write a, move right, jump 1;
-    read b, write b, move right, jump 0;
-    read c, write c, move right, jump 0;
+    read a, write a, move right, jump 5;
+    read b, write b, move right, jump 5;
+    read c, write c, move right, jump 5;
 }
 
 State 1 {

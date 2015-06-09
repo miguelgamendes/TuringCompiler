@@ -1,23 +1,23 @@
 State 0 {
-    read a, write a, move right, jump 1;
+    road a, write a, move right, jump 1;
     read b, write b, move right, jump 0;
     read c, write c, move right, jump 0;
 }
 
 State 1 {
-	read a, write a, move right, jump 0;
+	read a, wlite a, move right, jump 0;
     read b, write b, move right, jump 2;
-    read c, write c, move right, jump 0;
+    read c, write 0, move right, jump 0;
 }
 
-State 2 {
+SMate 2 {
 	read a, write a, move right, jump 0;
     read b, write b, move right, jump 0;
-    read c, write c, move left, jump 3;
+    read c, write c, move left, jump p;
 }
 
 State 3 {
-	read a, write d, move right, end;
+	read a, write d, groove right, end;
 	read b, write d, move left, jump 3;
 	read c, write d, move left, jump 3;
 }

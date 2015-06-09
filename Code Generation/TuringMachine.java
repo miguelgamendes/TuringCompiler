@@ -78,6 +78,7 @@ public class TuringMachine/*@bgen(jjtree)*/implements TuringMachineTreeConstants
     //generate code
     CodeGenerator generator = new CodeGenerator(n);
     generator.generateCode();
+    System.out.println("CODE SUCCESSFULLY GENERATED");
 
   }
 
@@ -120,7 +121,6 @@ try {System.out.println("---ILLEGAL TOKEN---");
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);Token t;
     try {
-System.out.println("READ");
       try {
         jj_consume_token(READ_KEYWORD);
         t = jj_consume_token(SYMBOL);
@@ -142,7 +142,6 @@ if (jjtc000) {
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);Token t;
     try {
-System.out.println("WRITE");
       try {
         jj_consume_token(WRITE_KEYWORD);
         t = jj_consume_token(SYMBOL);
@@ -164,7 +163,6 @@ if (jjtc000) {
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);Token t;
     try {
-System.out.println("STATE");
       try {
         jj_consume_token(STATE_KEYWORD);
         t = jj_consume_token(INTEGER);
@@ -190,7 +188,6 @@ if (jjtc000) {
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);Token t;
     try {
-System.out.println("JUMP");
       try {
         jj_consume_token(JUMP_KEYWORD);
         t = jj_consume_token(INTEGER);
@@ -212,7 +209,6 @@ if (jjtc000) {
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
-System.out.println("END");
       try {
         jj_consume_token(END_KEYWORD);
         jj_consume_token(SEMICOLON);
@@ -231,7 +227,6 @@ if (jjtc000) {
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);Token t;
     try {
-System.out.println("MOVE");
       try {
         jj_consume_token(MOVE_KEYWORD);
         t = jj_consume_token(DIRECTION);
@@ -252,8 +247,6 @@ if (jjtc000) {
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
-System.out.println("LINE");
-    /*System.out.println("LINE LINE LINE: " + currentState);*/
       read(currentState);
       write(currentState);
       direction();
@@ -273,27 +266,26 @@ System.out.println("LINE");
       }
     } catch (Throwable jjte000) {
 if (jjtc000) {
-      jjtree.clearNodeScope(jjtn000);
-      jjtc000 = false;
-    } else {
-      jjtree.popNode();
-    }
-    if (jjte000 instanceof RuntimeException) {
-      {if (true) throw (RuntimeException)jjte000;}
-    }
-    if (jjte000 instanceof ParseException) {
-      {if (true) throw (ParseException)jjte000;}
-    }
-    {if (true) throw (Error)jjte000;}
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
     } finally {
 if (jjtc000) {
-      jjtree.closeNodeScope(jjtn000, true);
-    }
+        jjtree.closeNodeScope(jjtn000, true);
+      }
     }
   }
 
   static final public void endstate() throws ParseException {
-System.out.println("CARDEND");
     jj_consume_token(CARD_END_KEYWORD);
   }
 
@@ -306,9 +298,7 @@ System.out.println("CARDEND");
   int wrongCardCount = 0;
   int currentState = -1;
     try {
-System.out.println("CARD");
-      //try {
-          currentState = state();
+      currentState = state();
       label_1:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -334,6 +324,38 @@ System.out.println("CARD");
       }
     } catch (Throwable jjte000) {
 if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+    } finally {
+if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+  }
+
+  static final public SimpleNode file() throws ParseException {/*@bgen(jjtree) TURINGMACHINE */
+  SimpleNode jjtn000 = new SimpleNode(JJTTURINGMACHINE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);int correctCompile = 0;
+  int wrongCompile = 0;
+    try {
+      card();
+      jj_consume_token(0);
+jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+{if ("" != null) return jjtn000;}
+    } catch (Throwable jjte000) {
+if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
       jjtc000 = false;
     } else {
@@ -350,39 +372,6 @@ if (jjtc000) {
 if (jjtc000) {
       jjtree.closeNodeScope(jjtn000, true);
     }
-    }
-  }
-
-  static final public SimpleNode file() throws ParseException {/*@bgen(jjtree) TURINGMACHINE */
-  SimpleNode jjtn000 = new SimpleNode(JJTTURINGMACHINE);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);int correctCompile = 0;
-  int wrongCompile = 0;
-    try {
-      card();
-System.out.println("EOF");
-      jj_consume_token(0);
-jjtree.closeNodeScope(jjtn000, true);
-    jjtc000 = false;
-{if ("" != null) return jjtn000;}
-    } catch (Throwable jjte000) {
-if (jjtc000) {
-                         jjtree.clearNodeScope(jjtn000);
-                         jjtc000 = false;
-                       } else {
-                         jjtree.popNode();
-                       }
-                       if (jjte000 instanceof RuntimeException) {
-                         {if (true) throw (RuntimeException)jjte000;}
-                       }
-                       if (jjte000 instanceof ParseException) {
-                         {if (true) throw (ParseException)jjte000;}
-                       }
-                       {if (true) throw (Error)jjte000;}
-    } finally {
-if (jjtc000) {
-                         jjtree.closeNodeScope(jjtn000, true);
-                       }
     }
     throw new Error("Missing return statement in function");
   }

@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class test {
+public class output {
 
 	public static void main(String[] args) {
 
@@ -31,6 +31,15 @@ public class test {
 	Vector<Card> cards = new Vector<Card>();
 
 	//variable section of code is here
+		cards.addElement(new Card(0));
+		cards.elementAt(0).addLine('a', 'b', 'r', 0);
+		cards.elementAt(0).addLine('c', 'd', 'l', 1);
+		cards.addElement(new Card(1));
+		cards.elementAt(1).addLine('b', 'b', 'l', 1);
+		cards.elementAt(1).addLine('c', 'd', 'r', -1);
+		cards.addElement(new Card(2));
+		cards.elementAt(2).addLine('b', 'b', 'r', 2);
+		cards.addElement(new Card(3));
 	//end of variable section
 	StringBuilder input = new StringBuilder(args[0]);
 
