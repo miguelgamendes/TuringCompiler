@@ -79,6 +79,9 @@ public class TuringMachine {
         }
       }
     }
+
+    //generate code
+
   }
 }
 
@@ -130,6 +133,7 @@ TOKEN :
 |< WRITE_KEYWORD : "write" >
 |< MOVE_KEYWORD : "move" >
 |< JUMP_KEYWORD : "jump" >
+|< END_KEYWORD : "end" >
 |< SEMICOLON : ";" >
 |< COMMA : "," >
 |< NOTANUMBER : ~["0"-"9"]>
@@ -205,6 +209,18 @@ void nextstate(int currentState) #JUMP :
   }
 }
 
+void end() #END :
+{
+}
+{
+  {System.out.println("END");}
+  try {
+    (<END_KEYWORD>
+    <SEMICOLON>)
+  } catch(ParseException e) {
+    error_skipto(SEMICOLON, "end statement");
+  }
+}
 
 void direction() #MOVE :
 {
@@ -231,7 +247,7 @@ void line(int currentState) #LINE :
     (read(currentState)
     write(currentState)
     direction()
-    nextstate(currentState))
+    (nextstate(currentState) | end())
   /*} catch (ParseException e) {
     {System.out.println("LINE ERROR");}
     error_skipto(SEMICOLON, "line");
