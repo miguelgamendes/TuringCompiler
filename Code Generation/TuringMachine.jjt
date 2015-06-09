@@ -1,0 +1,297 @@
+options
+{
+  LOOKAHEAD = 1;
+}
+
+PARSER_BEGIN(TuringMachine)
+
+import java.io.*;
+import java.util.*;
+
+// código Java que invoca o parser
+public class TuringMachine {
+
+  public static Hashtable ST = new Hashtable();
+
+  public static int symbolID = 0;
+
+  public static void main(String args[]) throws ParseException, FileNotFoundException {
+    
+    TuringMachine parser = new TuringMachine(new FileInputStream(args[0]));
+
+    //generate AST
+    try {
+      SimpleNode n = parser.file();
+      n.dump("");
+      System.out.println("DUMPED AST");
+    } catch(Exception e) {
+      System.out.println("FAILED DUMP");
+      System.out.println(e.getMessage());
+      e.printStackTrace();
+    }
+
+    String temp;
+    STC temp2;
+    String temp3;
+    STC temp4;
+
+    //print symbol table values
+    Enumeration t = ST.keys();
+
+    while(t.hasMoreElements() == true) {  
+      temp = (String)t.nextElement();
+      temp2 = (STC)ST.get(temp);
+      System.out.println(temp);
+        if ( temp2.type != null )
+          System.out.println(" type = " + temp2.type);
+        if ( temp2.value != null )
+          System.out.println(" value = " + temp2.value);
+        if ( temp2.state != -1 )
+          System.out.println(" state = " + temp2.state);
+    }
+
+    System.out.println("CREATED SYMBOL TABLE");
+
+    //semantic rules
+    //check for jump validity
+    Enumeration u = ST.keys();
+
+    while(u.hasMoreElements()) {
+      temp = (String)u.nextElement();
+      temp2 = (STC)ST.get(temp);
+
+      Enumeration v = ST.keys();
+      boolean validJump = false;
+
+      if(temp2.type == "Jump") {
+        while(v.hasMoreElements()) {
+          temp3 = (String)v.nextElement();
+          temp4 = (STC)ST.get(temp3);
+  
+          if(temp4.type == "State") {
+            if(temp2.value.equals(temp4.value))
+              validJump = true;
+          }
+        }
+
+        if(!validJump) {
+          System.out.println("Invalid jump. You didn't say anything about any state " + temp2.value + ", bro.");
+        }
+      }
+    }
+  }
+}
+
+PARSER_END(TuringMachine)
+
+JAVACODE
+void error_skipto(int kind, String type) {
+  ParseException e = generateParseException();
+  System.out.println("OMG you wrote a " + type + " wrong!!! D:");
+  Token t;
+  do {
+    t = getNextToken();
+  } while(t.kind != kind);
+}
+
+JAVACODE
+void tokenerror_skipto(int kind) {
+  System.out.println("---ILLEGAL TOKEN---");
+  Token t;
+  do {
+    t = getNextToken();
+  } while(t.kind != kind);
+}
+
+// símbolos que não devem ser considerados na análise
+SKIP :
+{
+" " 
+| "\n" 
+| "\t" 
+| "\r"
+| "("
+| ")"
+| "["
+| "]"
+| < INVALIDINPUT : ~["0"-"9" , "a"-"z" , "A" - "Z" , "," , ";" , "{" , "}"] >
+}
+
+// definição dos tokens (símbolos terminais)
+TOKEN :
+{
+< INTEGER : (["0" - "9"])+ >
+|< DIRECTION : "right" | "left" > 
+|< SYMBOL : (["a" - "z"] | ["A" - "Z"] | ["0" - "9"]) >
+|< STATE_KEYWORD : "State" >
+|< CARD_BEG_KEYWORD : "{" >
+|< CARD_END_KEYWORD : "}" >
+|< READ_KEYWORD : "read" >
+|< WRITE_KEYWORD : "write" >
+|< MOVE_KEYWORD : "move" >
+|< JUMP_KEYWORD : "jump" >
+|< SEMICOLON : ";" >
+|< COMMA : "," >
+|< NOTANUMBER : ~["0"-"9"]>
+}
+
+// definição da produção
+void read(int currentState) #READ : 
+{
+  Token t;
+}
+{
+  {System.out.println("READ");}
+  try {
+    (<READ_KEYWORD>
+    t = <SYMBOL> {jjtThis.value = t.image;}
+    <COMMA>)
+    {ST.put(new Integer(symbolID++).toString(), new STC("Read", t.image, currentState));}
+  } catch(ParseException e) {
+    error_skipto(COMMA, "read statement");
+  }
+}
+
+void write(int currentState) #WRITE :
+{
+  Token t;
+}
+{
+  {System.out.println("WRITE");}
+  try {
+    (<WRITE_KEYWORD>
+    t = <SYMBOL> {jjtThis.value = t.image;}
+    <COMMA>)
+    {ST.put(new Integer(symbolID++).toString(), new STC("Write", t.image, currentState));}
+  } catch(ParseException e) {
+    error_skipto(COMMA, "write statement");
+  }
+}
+
+int state() #STATE :
+{
+  Token t;
+}
+{
+  {System.out.println("STATE");}
+  try {
+    (<STATE_KEYWORD>
+    t = <INTEGER> {jjtThis.value = t.image;}
+    <CARD_BEG_KEYWORD>)
+    {ST.put(new Integer(symbolID++).toString(), new STC("State", t.image, t.image));}
+
+    //{System.out.println("STATE STATE STATE: " + Integer.parseInt(t.image));}
+    {return Integer.parseInt(t.image);}
+  } catch(TokenMgrError e) {
+    tokenerror_skipto(CARD_BEG_KEYWORD);
+  } catch(ParseException e) {
+    error_skipto(CARD_BEG_KEYWORD, "card header");
+  }
+}
+
+void nextstate(int currentState) #JUMP :
+{
+  Token t;
+}
+{
+  {System.out.println("JUMP");}
+  try {
+    (<JUMP_KEYWORD>
+    t = <INTEGER> {jjtThis.value = t.image;}
+    <SEMICOLON>)
+    {ST.put(new Integer(symbolID++).toString(), new STC("Jump", t.image, currentState));}
+  } catch(ParseException e) {
+    error_skipto(SEMICOLON, "jump statement");
+  }
+}
+
+
+void direction() #MOVE :
+{
+  Token t;
+}
+{
+  {System.out.println("MOVE");}
+  try {
+    (<MOVE_KEYWORD>
+    t = <DIRECTION> {jjtThis.value = t.image;}
+    <COMMA>)
+  } catch(ParseException e) {
+    error_skipto(COMMA, "move statement");
+  }
+}
+
+void line(int currentState) #LINE :
+{
+}
+{
+  {System.out.println("LINE");
+    /*System.out.println("LINE LINE LINE: " + currentState);*/}
+  //try {
+    (read(currentState)
+    write(currentState)
+    direction()
+    nextstate(currentState))
+  /*} catch (ParseException e) {
+    {System.out.println("LINE ERROR");}
+    error_skipto(SEMICOLON, "line");
+  }*/
+}
+
+void endstate() #void :
+{
+}
+{
+  {System.out.println("CARDEND");}
+  <CARD_END_KEYWORD>
+  //|
+  //error_skipto(CARD_END_KEYWORD, "card ending")
+}
+
+void card() #CARD :
+{
+  int correctCard = 1;
+  int wrongCard = 0;
+  int correctCardCount = 0;
+  int wrongCardCount = 0;
+  int currentState = -1;
+}
+{
+  {System.out.println("CARD");}
+  //try {
+    currentState = state()
+    (line(currentState))*
+    endstate()
+    //endstate()
+    [/*correctCardCount=*/card()]
+  /*} catch(ParseException e) {
+    error_skipto(CARD_END_KEYWORD, "card");
+    return ++wrongCardCount;
+  }
+  { return wrongCardCount; }*/
+}
+
+SimpleNode file() #TURINGMACHINE :
+{
+  int correctCompile = 0;
+  int wrongCompile = 0;
+}
+{
+  /*{System.out.println("\nErrors:");}
+
+  correctCompile =*/ card()
+
+  /*{if(wrongCompile == 0)System.out.println("NONE");}
+  {System.out.println();}
+  {
+    if(wrongCompile != 0)
+      System.out.println("Compilation complete.\n\nWrong cards: " + wrongCompile);
+    else
+      System.out.println("Compilation complete.\n\nAll cards correct.");
+  }*/
+
+  {System.out.println("EOF");}
+  <EOF>
+
+  {return jjtThis;}
+}
