@@ -1,5 +1,5 @@
 State 0 {
-    read a, write b, move right, jump 4;
+    read a, write b, move right, jump 0;
     read c, write d, move left, jump 1;
 }
 

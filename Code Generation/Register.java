@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class REG extends Object {
+public class Register extends Object {
 
   public  int value;   // the value of register ;
   public  boolean inuse=false;
@@ -8,7 +8,7 @@ public class REG extends Object {
 
 
 
-  public REG(int id) {
+  public Register(int id) {
 	  regid=id;
   }
 

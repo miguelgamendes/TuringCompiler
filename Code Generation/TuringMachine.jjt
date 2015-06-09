@@ -15,20 +15,20 @@ public class TuringMachine {
 
   public static int symbolID = 0;
 
-  public static void main(String args[]) throws ParseException, FileNotFoundException {
+  public static void main(String args[]) throws ParseException, FileNotFoundException, UnsupportedEncodingException, IOException {
     
     TuringMachine parser = new TuringMachine(new FileInputStream(args[0]));
 
     //generate AST
-    try {
+    //try {
       SimpleNode n = parser.file();
       n.dump("");
       System.out.println("DUMPED AST");
-    } catch(Exception e) {
+    /*} catch(Exception e) {
       System.out.println("FAILED DUMP");
       System.out.println(e.getMessage());
       e.printStackTrace();
-    }
+    }*/
 
     String temp;
     STC temp2;
@@ -81,6 +81,8 @@ public class TuringMachine {
     }
 
     //generate code
+    CodeGenerator generator = new CodeGenerator(n);
+    generator.generateCode();
 
   }
 }
@@ -244,7 +246,7 @@ void line(int currentState) #LINE :
   {System.out.println("LINE");
     /*System.out.println("LINE LINE LINE: " + currentState);*/}
   //try {
-    (read(currentState)
+    read(currentState)
     write(currentState)
     direction()
     (nextstate(currentState) | end())
