@@ -5,15 +5,15 @@ State 0 {
 }
 
 State 1 {
-	read a, write a, move right, jump 0;
+	read a, write a, move right, jump 1;
     read b, write b, move right, jump 2;
     read c, write c, move right, jump 0;
 }
 
 State 2 {
-	read a, write a, move right, jump 0;
+	read a, write a, move right, jump 1;
     read b, write b, move right, jump 0;
-    read c, write c, move left, jump 3;
+    read c, write d, move left, jump 3;
 }
 
 State 3 {

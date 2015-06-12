@@ -15,15 +15,27 @@ public class TuringMachine {
 
   public static int symbolID = 0;
 
-  public static void main(String args[]) throws ParseException, FileNotFoundException, UnsupportedEncodingException, IOException {
+  public static boolean debug = false;
+
+  public static void main(String[] args) throws ParseException, FileNotFoundException, UnsupportedEncodingException, IOException, InterruptedException {
     
+    if(args.length > 2) {
+      System.out.println("USAGE FOR COMPILER: java TuringMachine inputfile [-d]");
+      System.exit(1);
+    } else if(args.length == 2) {
+      if(args[1].equals("-d"))
+        debug = true;
+    }
+
     TuringMachine parser = new TuringMachine(new FileInputStream(args[0]));
 
     //generate AST
     //try {
       SimpleNode n = parser.file();
-      n.dump("");
-      System.out.println("DUMPED AST");
+      if(debug) {
+        n.dump("");
+        System.out.println("DUMPED AST");
+      }
     /*} catch(Exception e) {
       System.out.println("FAILED DUMP");
       System.out.println(e.getMessage());
@@ -35,22 +47,24 @@ public class TuringMachine {
     String temp3;
     STC temp4;
 
-    //print symbol table values
-    Enumeration t = ST.keys();
-
-    while(t.hasMoreElements() == true) {  
-      temp = (String)t.nextElement();
-      temp2 = (STC)ST.get(temp);
-      System.out.println(temp);
-        if ( temp2.type != null )
-          System.out.println(" type = " + temp2.type);
-        if ( temp2.value != null )
-          System.out.println(" value = " + temp2.value);
-        if ( temp2.state != -1 )
-          System.out.println(" state = " + temp2.state);
+    if(debug) {
+      //print symbol table values
+        Enumeration t = ST.keys();
+  
+        while(t.hasMoreElements() == true) {  
+          temp = (String)t.nextElement();
+          temp2 = (STC)ST.get(temp);
+          System.out.println(temp);
+            if ( temp2.type != null )
+              System.out.println(" type = " + temp2.type);
+            if ( temp2.value != null )
+              System.out.println(" value = " + temp2.value);
+            if ( temp2.state != -1 )
+              System.out.println(" state = " + temp2.state);
+        }
+  
+      System.out.println("CREATED SYMBOL TABLE");
     }
-
-    System.out.println("CREATED SYMBOL TABLE");
 
     //semantic rules
     //check for jump validity
@@ -83,8 +97,12 @@ public class TuringMachine {
     //generate code
     CodeGenerator generator = new CodeGenerator(n);
     generator.generateCode();
-    System.out.println("CODE SUCCESSFULLY GENERATED");
+    if(debug)
+      System.out.println("CODE SUCCESSFULLY GENERATED");
 
+    Runtime.getRuntime().exec("javac output.java");
+    Thread.sleep(4000);
+    Runtime.getRuntime().exec("jar cfe YourTuringMachine.jar output output.class output$1Card.class");
   }
 }
 
